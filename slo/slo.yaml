@@ -1,0 +1,26 @@
+version: prometheus/v1
+service: k8s-apiserver
+labels:
+  component: kubernetes
+slos:
+  - name: requests-availability
+    objective: 99.9
+    description: Warn that we are returning correctly the requests to the clients (kubectl users, controllers...).
+    labels:
+      category: availability
+    sli:
+      events:
+        error_query: sum(rate(apiserver_request_total{code=~"(5..|429)"}[{{.window}}]))
+        total_query: sum(rate(apiserver_request_total[{{.window}}]))
+    alerting:
+      name: K8sApiserverAvailabilityAlert
+      labels:
+        category: availability
+      annotations:
+        runbook: https://example.com
+      page_alert:
+        labels:
+          severity: critical
+      ticket_alert:
+        labels:
+          severity: warning
