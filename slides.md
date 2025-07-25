@@ -43,14 +43,14 @@ Axios, Inc
 
 - Metrics: `http_requests_total`, `http_request_duration_seconds`
 - Labels: `method`, `route`, `status`
-- Queries: `rate(http_requests_total{method=~"5.."}[10m])`
+- Queries: `rate(http_requests_total{status=~"5.."}[10m])`
 
 ### Alert Rules: Simple
 
 Availability: More than 10/s HTTP 500
 
 ```promql
-rate(http_requests_total{method=~"5.."}[10m]) > 10
+rate(http_requests_total{status=~"5.."}[10m]) > 10
 ```
 
 Latency: Higher than 200ms
@@ -64,13 +64,13 @@ histogram_quantile(0.95, sum by (le)(rate(http_request_duration_seconds_bucket[1
 Availability
 
 ```promql
-sum(rate(http_requests_total{status=~"2.."}[10m])) / sum(rate(http_requests_total[10m])) > 0.01
+sum(rate(http_requests_total{status=~"5.."}[10m])) / sum(rate(http_requests_total[10m])) > 0.01
 ```
 
 Latency
 
 ```promql
-sum(rate(http_request_duration_seconds_bucket{le="0.2"}[10m])) / sum(rate(http_request_duration_seconds_count[10m])) > 0.05
+sum(rate(http_request_duration_seconds_bucket{le="0.2"}[10m])) / sum(rate(http_request_duration_seconds_count[10m])) < 0.95
 ```
 
 ### Really?
